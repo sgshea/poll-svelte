@@ -1,19 +1,19 @@
 export interface Question {
-    id: string;
+    id: number;
     question: string;
     createdAt: Date;
     choices: Choice[];
 }
 
 export interface Choice {
-    id: string;
+    id: number;
     choice: string;
     questionId: string;
     votes?: Vote[];
 }
 
 export interface Vote {
-    id: string;
+    id: number;
     choiceId: string;
     createdAt: Date;
 }

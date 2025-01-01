@@ -1,13 +1,14 @@
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 export const questions = sqliteTable(
 	'questions',
 	{
-		id: text('id').primaryKey(),
+		id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
 		question: text('question').notNull(),
-		createdAt: integer('created_at', { mode: "timestamp" })
+		createdAt: text('createdAt')
 			.notNull()
+			.default(sql`(current_timestamp)`),
 	},
 	(questions) => ({
 		questionIdx: uniqueIndex('question_idx').on(questions.question),
@@ -21,7 +22,7 @@ export const questionRelations = relations(questions, ({ many }) => ({
 export const choices = sqliteTable(
 	'choices',
 	{
-		id: text('id').primaryKey(),
+		id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
 		choice: text('choice').notNull(),
 		questionId: text('question_id')
 			.notNull()
@@ -46,12 +47,13 @@ export const choicesRelations = relations(choices, ({ one, many }) => ({
 export const votes = sqliteTable(
 	'votes',
 	{
-		id: text('id').primaryKey(),
+		id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
 		choiceId: text('choice_id')
 			.notNull()
 			.references(() => choices.id),
-		createdAt: integer('created_at', { mode: "timestamp" })
+		createdAt: text('createdAt')
 			.notNull()
+			.default(sql`(current_timestamp)`),
 	},
 	(votes) => ({
 		choiceIdx: index('vote_choice_idx').on(votes.choiceId),
