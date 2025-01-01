@@ -1,7 +1,7 @@
 export interface Question {
     id: string;
     question: string;
-    createdAt: number;
+    createdAt: Date;
     choices: Choice[];
 }
 
@@ -15,5 +15,5 @@ export interface Choice {
 export interface Vote {
     id: string;
     choiceId: string;
-    createdAt: number;
+    createdAt: Date;
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+    import Poll from '$lib/poll.svelte';
 	let { data }: { data: PageData } = $props();
 </script>
 
@@ -7,12 +8,6 @@
 
 <ul>
 	{#each data.questions as question}
-		<li>
-			<div>
-				{question.id}
-				{question.question}
-				{question.createdAt}
-			</div>
-		</li>
+        <Poll {question} />
 	{/each}
 </ul>

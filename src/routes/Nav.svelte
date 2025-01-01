@@ -10,7 +10,7 @@
             </a>
             <nav class="flex items-center space-x-6 text-sm font-medium">
                 <a href="/" class="transition-colors hover:text-foreground/80">Home</a>
-                <a href="/polls" class="transition-colors hover:text-foreground/80">My Polls</a>
+                <!-- <a href="/polls" class="transition-colors hover:text-foreground/80">My Polls</a> -->
                 <a href="/create" class="transition-colors hover:text-foreground/80">Create Poll</a>
             </nav>
         </div>
