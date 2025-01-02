@@ -24,7 +24,7 @@ export const choices = sqliteTable(
 	{
 		id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
 		choice: text('choice').notNull(),
-		questionId: text('question_id')
+		questionId: integer('question_id')
 			.notNull()
 			.references(() => questions.id)
 	},
@@ -48,7 +48,7 @@ export const votes = sqliteTable(
 	'votes',
 	{
 		id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-		choiceId: text('choice_id')
+		choiceId: integer('choice_id')
 			.notNull()
 			.references(() => choices.id),
 		createdAt: text('createdAt')

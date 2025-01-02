@@ -1,10 +1,10 @@
-import type { PageServerLoad, Actions } from "./$types.js";
+import type { PageServerLoad, Actions } from "./$types";
 import { fail } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { pollQuestionSchema } from "$lib/form-schema.js";
+import { pollQuestionSchema } from "$lib/form-schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { db } from '$lib/server/db';
-import { questions } from '$lib/server/db/schema.js';
+import { questions, choices } from '$lib/server/db/schema';
 
 export const load: PageServerLoad = async () => {
     return {
@@ -22,7 +22,13 @@ export const actions: Actions = {
         }
 
         // Insert the form data into the database
-        await db.insert(questions).values(form.data);
+        const question_id = await db.insert(questions).values(form.data).returning({ id: questions.id });
+        for (const choice of form.data.options) {
+            await db.insert(choices).values({
+                questionId: question_id[0].id,
+                choice,
+            });
+        };
 
         return {
             form,
