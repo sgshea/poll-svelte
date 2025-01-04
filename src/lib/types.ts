@@ -9,7 +9,7 @@ export interface Choice {
     id: number;
     choice: string;
     questionId: number;
-    votes?: Vote[];
+    votes: Vote[];
 }
 
 export interface Vote {

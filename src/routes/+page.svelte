@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-    import Poll from '$lib/poll.svelte';
+    import Poll from '$lib/components/poll.svelte';
 	let { data }: { data: PageData } = $props();
 </script>
 

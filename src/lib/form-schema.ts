@@ -14,3 +14,12 @@ export const pollQuestionSchema = z.object({
 });
 
 export type PollQuestionSchema = typeof pollQuestionSchema;
+
+export const pollVoteSchema = z.object({
+    choice:
+        z.string()
+            .min(1, "Option cannot be empty")
+            .max(100, "Option must be less than 100 characters")
+});
+
+export type PollVoteSchema = typeof pollVoteSchema;
