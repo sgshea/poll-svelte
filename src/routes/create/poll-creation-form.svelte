@@ -1,3 +1,8 @@
+<!--
+	Component: poll-creation-form
+	This component supports creating a new poll with a question and 2-10 options.
+	It submits to the `/create` endpoint.
+-->
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';

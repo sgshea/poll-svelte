@@ -3,7 +3,6 @@ import { db } from '$lib/server/db';
 import { pollVoteSchema } from '$lib/form-schema';
 import { fail } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
-import { pollQuestionSchema } from "$lib/form-schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { votes } from '$lib/server/db/schema';
 
@@ -69,6 +68,6 @@ export const load = (async ({ params }) => {
 
     return {
         question: q,
-        form: await superValidate(zod(pollVoteSchema)),
+        formSchema: await superValidate(zod(pollVoteSchema)),
     };
 }) satisfies PageServerLoad;

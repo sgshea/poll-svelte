@@ -6,5 +6,5 @@
 </script>
 
 {#if data.question}
-    <PollVote question={data.question} data={data.form} />
+    <PollVote question={data.question} formSchema={data.formSchema} />
 {/if}

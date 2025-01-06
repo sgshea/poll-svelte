@@ -49,6 +49,7 @@
 		"@libsql/client": "^0.9.0",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
-		"drizzle-orm": "^0.33.0"
+		"drizzle-orm": "^0.33.0",
+		"layerchart": "^0.60.3"
 	}
 }

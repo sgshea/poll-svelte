@@ -1,5 +1,8 @@
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db';
+import { pollVoteSchema } from '$lib/form-schema';
+import { superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
 
 export const load = (async () => {
     const q = await db.query.questions.findMany({
@@ -12,6 +15,7 @@ export const load = (async () => {
         }
     });
     return {
-        questions: q
+        questions: q,
+        form: await superValidate(zod(pollVoteSchema)),
     }
 }) satisfies PageServerLoad;
