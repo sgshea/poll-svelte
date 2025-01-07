@@ -20,6 +20,8 @@
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
+		"@types/d3": "^7.4.3",
+		"@types/d3-scale": "^4.0.8",
 		"autoprefixer": "^10.4.20",
 		"bits-ui": "^1.0.0-next.76",
 		"clsx": "^2.1.1",
@@ -49,6 +51,8 @@
 		"@libsql/client": "^0.9.0",
 		"@tailwindcss/forms": "^0.5.9",
 		"@tailwindcss/typography": "^0.5.15",
+		"d3-array": "^3.2.4",
+		"d3-scale": "^4.0.2",
 		"drizzle-orm": "^0.33.0",
 		"layerchart": "^0.60.3"
 	}

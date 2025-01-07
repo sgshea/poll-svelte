@@ -6,7 +6,7 @@ const config: Config = {
 	darkMode: ["class"],
 	content: [
 		"./src/**/*.{html,js,svelte,ts}",
-		'./node_modules/layerchart/**/*.{svelte,js}' // for layerchart
+		"./node_modules/layerchart/**/*.{svelte,js}" // for layerchart
 	],
 	safelist: ["dark"],
 	theme: {
@@ -52,6 +52,13 @@ const config: Config = {
 					DEFAULT: "hsl(var(--card) / <alpha-value>)",
 					foreground: "hsl(var(--card-foreground) / <alpha-value>)"
 				},
+				// LayerChart tokens mapped to shadcn-svelte colors.
+				surface: {
+					content: "hsl(var(--card-foreground) / <alpha-value>)",
+					100: "hsl(var(--background) / <alpha-value>)",
+					200: "hsl(var(---muted) / <alpha-value>)",
+					300: "hsl(var(--background) / <alpha-value>)"
+				},
 				sidebar: {
 					DEFAULT: "hsl(var(--sidebar-background))",
 					foreground: "hsl(var(--sidebar-foreground))",
@@ -61,13 +68,6 @@ const config: Config = {
 					"accent-foreground": "hsl(var(--sidebar-accent-foreground))",
 					border: "hsl(var(--sidebar-border))",
 					ring: "hsl(var(--sidebar-ring))",
-				},
-				// LayerChart tokens mapped to shadcn-svelte colors.
-				surface: {
-					content: "hsl(var(--card-foreground) / <alpha-value>)",
-					100: "hsl(var(--background) / <alpha-value>)",
-					200: "hsl(var(---muted) / <alpha-value>)",
-					300: "hsl(var(--background) / <alpha-value>)"
 				},
 			},
 			borderRadius: {

@@ -32,27 +32,30 @@
 <Card.Root>
 	<Card.Header>
 		<Card.Title>{question.question}</Card.Title>
+		<Card.Description>Choose an option to vote on the poll</Card.Description>
 	</Card.Header>
 
-	<Card.Content class="grid gap-4">
-		<form method="POST" action="/poll/{question.id}" use:enhance>
+	<form method="POST" action="/poll/{question.id}" use:enhance>
+		<Card.Content class="grid gap-6">
 			<Form.Fieldset {form} name="choice" class="flex items-center space-x-4 rounded-md border p-4">
-				<RadioGroup.Root
-					bind:value={$formData.choice}
-					class="flex flex-col space-y-2"
-					name="choice"
-				>
+				<RadioGroup.Root bind:value={$formData.choice} class="grid grid-cols-3 gap-4" name="choice">
 					{#each question.choices as choice}
 						<Form.Control>
 							{#snippet children({ props })}
-								<RadioGroup.Item value={choice.choice} {...props} />
-								<Form.Label class="font-normal">{choice.choice}</Form.Label>
+								<Form.Label
+									class="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary"
+								>
+									<RadioGroup.Item value={choice.choice} class="sr-only" {...props} />
+									{choice.choice}
+								</Form.Label>
 							{/snippet}
 						</Form.Control>
 					{/each}
 				</RadioGroup.Root>
 			</Form.Fieldset>
+		</Card.Content>
+		<Card.Footer>
 			<Form.Button>Vote</Form.Button>
-		</form>
-	</Card.Content>
+		</Card.Footer>
+	</form>
 </Card.Root>

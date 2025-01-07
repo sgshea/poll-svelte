@@ -5,6 +5,7 @@ import { fail } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { votes } from '$lib/server/db/schema';
+import { and } from 'drizzle-orm/sqlite-core/expressions';
 
 export const actions: Actions = {
     default: async (event) => {
@@ -24,7 +25,7 @@ export const actions: Actions = {
 
         // Find id of the choice based on choice name and question id matching
         const choice_id = await db.query.choices.findFirst({
-            where: (choices, { eq }) => eq(choices.choice, choice) && (eq(choices.questionId, +question_id))
+            where: (choices, { eq }) => and(eq(choices.choice, choice), (eq(choices.questionId, +question_id)))
         });
 
         if (!choice_id) {
@@ -37,8 +38,7 @@ export const actions: Actions = {
         });
 
         return {
-            ok: true,
-            message: "Vote added successfully",
+            form
         }
     },
 };

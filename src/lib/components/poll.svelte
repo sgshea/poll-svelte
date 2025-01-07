@@ -13,44 +13,85 @@
 	}>();
 
 	import * as Card from '$lib/components/ui/card/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 
-	import { BarChart, Tooltip } from 'layerchart';
+	import { PieChart, Tooltip, BarChart } from 'layerchart';
+	import { schemeTableau10 } from 'd3-scale-chromatic';
 
 	// Transform choice data into data to be passed into the chart(s)
 	const chartData = question.choices.map((choice: Choice) => ({
 		choice: choice.choice,
 		votes: choice.votes.length
 	}));
+
+	import { ChartPie, ChartColumn } from 'lucide-svelte';
+
+	// State to keep track of the current chart type
+	let chartType = $state('bar');
+
+	function toggleChartType() {
+		chartType = chartType === 'bar' ? 'pie' : 'bar';
+	}
 </script>
+
+{#snippet pollBarChart(data: any)}
+	<BarChart
+		{data}
+		x="choice"
+		y="votes"
+		cRange={schemeTableau10}
+		props={{
+			yAxis: {
+				format: 'integer'
+			}
+		}}
+		labels={{
+			format: 'integer'
+		}}
+	>
+		<svelte:fragment slot="tooltip" let:x let:y>
+			<Tooltip.Root let:data>
+				<Tooltip.Header>{x(data)}</Tooltip.Header>
+				<Tooltip.List>
+					<Tooltip.Item label="votes" value={y(data)} />
+				</Tooltip.List>
+			</Tooltip.Root>
+		</svelte:fragment>
+	</BarChart>
+{/snippet}
+
+{#snippet pollPieChart(data: any)}
+	<PieChart
+		{data}
+		key="choice"
+		value="votes"
+		legend={{ placement: 'left', orientation: 'vertical' }}
+		cRange={schemeTableau10}
+	/>
+{/snippet}
 
 <Card.Root>
 	<Card.Header>
 		<Card.Title>{question.question}</Card.Title>
+
+		<div class="ml-auto flex items-center">
+			<Button class="mr-2" size="sm" href="/poll/{question.id}">Vote</Button>
+			<Button variant="outline" size="icon" onclick={toggleChartType}>
+				{#if chartType === 'bar'}
+					<ChartPie />
+				{:else}
+					<ChartColumn />
+				{/if}
+			</Button>
+		</div>
 	</Card.Header>
 
 	<Card.Content class="mx-4 my-4 h-[300px] rounded border p-4">
-		<BarChart
-			data={chartData}
-			x="choice"
-			y="votes"
-			props={{
-				yAxis: {
-					format: 'integer'
-				}
-			}}
-			labels={{
-				format: 'integer'
-			}}
-		>
-			<svelte:fragment slot="tooltip" let:x let:y>
-				<Tooltip.Root let:data>
-					<Tooltip.Header>{x(data)}</Tooltip.Header>
-					<Tooltip.List>
-						<Tooltip.Item label="votes" value={y(data)} />
-					</Tooltip.List>
-				</Tooltip.Root>
-			</svelte:fragment>
-		</BarChart>
+		{#if chartType === 'pie'}
+			{@render pollPieChart(chartData)}
+		{:else}
+			{@render pollBarChart(chartData)}
+		{/if}
 	</Card.Content>
 
 	<Card.Footer>

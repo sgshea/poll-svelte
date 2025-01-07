@@ -5,8 +5,7 @@
 	let { children } = $props();
 </script>
 
-<Nav />
-
 <main>
+	<Nav />
 	{@render children()}
 </main>
