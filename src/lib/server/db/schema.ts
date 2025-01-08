@@ -1,6 +1,10 @@
 import { relations, sql } from 'drizzle-orm';
 import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
+//
+// POLLING
+//
+
 export const questions = sqliteTable(
 	'questions',
 	{
@@ -8,10 +12,10 @@ export const questions = sqliteTable(
 		question: text('question').notNull(),
 		createdAt: text('createdAt')
 			.notNull()
-			.default(sql`(current_timestamp)`),
+			.default(sql`(current_timestamp)`)
 	},
 	(questions) => ({
-		questionIdx: uniqueIndex('question_idx').on(questions.question),
+		questionIdx: uniqueIndex('question_idx').on(questions.question)
 	})
 );
 
@@ -29,10 +33,7 @@ export const choices = sqliteTable(
 			.references(() => questions.id)
 	},
 	(choices) => ({
-		choiceQuestionIdIdx: index('choice_questionid_idx').on(
-			choices.choice,
-			choices.questionId
-		)
+		choiceQuestionIdIdx: index('choice_questionid_idx').on(choices.choice, choices.questionId)
 	})
 );
 
@@ -53,10 +54,10 @@ export const votes = sqliteTable(
 			.references(() => choices.id),
 		createdAt: text('createdAt')
 			.notNull()
-			.default(sql`(current_timestamp)`),
+			.default(sql`(current_timestamp)`)
 	},
 	(votes) => ({
-		choiceIdx: index('vote_choice_idx').on(votes.choiceId),
+		choiceIdx: index('vote_choice_idx').on(votes.choiceId)
 	})
 );
 
@@ -66,3 +67,25 @@ export const votesRelations = relations(votes, ({ one }) => ({
 		references: [choices.id]
 	})
 }));
+
+//
+// AUTHENTICATION
+//
+
+export const user = sqliteTable('user', {
+	id: text('id').primaryKey(),
+	username: text('username').notNull().unique(),
+	passwordHash: text('password_hash').notNull()
+});
+
+export const session = sqliteTable('session', {
+	id: text('id').primaryKey(),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id),
+	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
+});
+
+export type Session = typeof session.$inferSelect;
+
+export type User = typeof user.$inferSelect;

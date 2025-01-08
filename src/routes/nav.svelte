@@ -5,12 +5,17 @@
 -->
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button/index.js';
-    import { Separator } from '$lib/components/ui/separator/index.js';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import * as Card from '$lib/components/ui/card/index.js';
 
-	import { Sun, Moon, Menu, Vote } from 'lucide-svelte';
+	import { Sun, Moon, Menu, Vote, User } from 'lucide-svelte';
 	import { toggleMode } from 'mode-watcher';
+	import type { LayoutData } from './$types';
+
+	// Get data such as user information from parent components
+	let { data }: { data: LayoutData } = $props();
+	const user = data.user;
 
 	// The different menu items, easily extendable
 	const menu = [{ name: 'Create Poll', href: '/create' }];
@@ -33,25 +38,27 @@
 <Card.Root
 	class="container mt-5 flex items-center justify-between rounded-2xl border-0 bg-card px-4 py-3"
 >
+	<Button href="/">
+		Svelte Polling
+		<Vote />
+	</Button>
 	<ul class="hidden items-center gap-4 text-card-foreground md:flex">
-		<li class="font-medium text-primary">
-			<Button href="/">
-				Svelte Polling
-				<Vote />
-			</Button>
-		</li>
-
 		{#each menu as menuItem}
 			<li><Button variant="secondary" href={menuItem.href}>{menuItem.name}</Button></li>
 		{/each}
 	</ul>
 
 	<div class="flex items-center">
-		<Button variant="secondary" class="hidden px-2 md:block">Login</Button>
+		{#if user}
+			<Button href="/user" class="hidden md:block">{user.username}</Button>
+			<form method="post" action="user?/logout">
+				<Button variant="secondary" type="submit" class="mx-2 hidden md:block">Sign out</Button>
+			</form>
+		{:else}
+			<Button href="/user/login" class="ml-2 mr-2 hidden md:block">Login</Button>
+		{/if}
 
-		<Button class="ml-2 mr-2 hidden md:block">Sign Up</Button>
-
-		<div class="mr-2 flex items-center gap-2 md:hidden">
+		<div class="mr-2 flex items-center justify-between gap-2 md:hidden">
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger>
 					<Button variant="outline" size="icon">
@@ -59,16 +66,40 @@
 					</Button>
 				</DropdownMenu.Trigger>
 
-				<DropdownMenu.Content align="start">
-					<DropdownMenu.Item>
-						<Button href="/" class="w-full">Svelte Polling<Vote /></Button>
-					</DropdownMenu.Item>
-                    <Separator />
+				<DropdownMenu.Content>
 					{#each menu as menuItem}
 						<DropdownMenu.Item>
-							<Button variant="secondary" href={menuItem.href} class="w-full">{menuItem.name}</Button>
+							<Button variant="secondary" href={menuItem.href} class="w-full"
+								>{menuItem.name}</Button
+							>
 						</DropdownMenu.Item>
 					{/each}
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
+
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger>
+					<Button variant="outline" size="icon">
+						<User class="h-5 w-5 rotate-0 scale-100" />
+					</Button>
+				</DropdownMenu.Trigger>
+
+				<DropdownMenu.Content align="end">
+					<DropdownMenu.Item>
+						{#if user}
+							<Button href="/user" class="w-full">{user.username}</Button>
+						{:else}
+							<Button href="/user/login" class="w-full">Login</Button>
+						{/if}
+					</DropdownMenu.Item>
+					{#if user}
+						<Separator />
+						<form method="post" action="user?/logout">
+							<DropdownMenu.Item>
+								<Button variant="secondary" type="submit" class="w-full">Sign out</Button>
+							</DropdownMenu.Item>
+						</form>
+					{/if}
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>
 		</div>
