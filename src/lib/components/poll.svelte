@@ -25,6 +25,7 @@
 	}));
 
 	import { ChartPie, ChartColumn } from 'lucide-svelte';
+	import { fade } from 'svelte/transition';
 
 	// State to keep track of the current chart type
 	let chartType = $state('bar');
@@ -65,7 +66,8 @@
 		{data}
 		key="choice"
 		value="votes"
-		legend={{ placement: 'left', orientation: 'vertical' }}
+		padding={{ bottom: 40 }}
+		legend={{ placement: 'bottom', orientation: 'horizontal' }}
 		cRange={schemeTableau10}
 	/>
 {/snippet}
@@ -86,11 +88,15 @@
 		</div>
 	</Card.Header>
 
-	<Card.Content class="mx-4 my-4 h-[300px] rounded border p-4">
+	<Card.Content class="mx-4 my-4 rounded border p-4">
 		{#if chartType === 'pie'}
-			{@render pollPieChart(chartData)}
+			<div class="h-[300px]" in:fade>
+				{@render pollPieChart(chartData)}
+			</div>
 		{:else}
-			{@render pollBarChart(chartData)}
+			<div class="h-[300px]" in:fade>
+				{@render pollBarChart(chartData)}
+			</div>
 		{/if}
 	</Card.Content>
 

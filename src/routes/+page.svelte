@@ -5,7 +5,7 @@
 </script>
 
 <div class="flex justify-center my-4">
-	<div class="bg-gray-100 rounded-lg px-6 py-3">
+	<div class="px-6 py-3">
 		<h1 class="text-2xl font-bold">Current Polls</h1>
 	</div>
 </div>
