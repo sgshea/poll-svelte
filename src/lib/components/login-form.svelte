@@ -21,7 +21,7 @@
 	const { form: formData, enhance } = form;
 </script>
 
-<Card.Root class="mx-auto max-w-sm">
+<Card.Root class="mx-auto max-w-sm mt-12">
 	<Card.Header>
 		<Card.Title class="text-2xl">Login</Card.Title>
 		<Card.Description>Enter your username and password below to login to your account</Card.Description>

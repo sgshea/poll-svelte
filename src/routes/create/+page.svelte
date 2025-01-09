@@ -4,4 +4,6 @@
 	let { data }: { data: PageData } = $props();
 </script>
 
-<PollForm data={data.form} />
+<div class="flex h-screen w-full items-start justify-center px-4">
+	<PollForm data={data.form} />
+</div>
