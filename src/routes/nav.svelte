@@ -15,7 +15,6 @@
 
 	// Get data such as user information from parent components
 	let { data }: { data: LayoutData } = $props();
-	const user = data.user;
 
 	// The different menu items, easily extendable
 	const menu = [{ name: 'Create Poll', href: '/create' }];
@@ -49,8 +48,8 @@
 	</ul>
 
 	<div class="flex items-center">
-		{#if user}
-			<Button href="/user" class="hidden md:block">{user.username}</Button>
+		{#if data.user}
+			<Button href="/user" class="hidden md:block">{data.user.username}</Button>
 			<form method="post" action="user?/logout">
 				<Button variant="secondary" type="submit" class="mx-2 hidden md:block">Sign out</Button>
 			</form>
@@ -86,13 +85,13 @@
 
 				<DropdownMenu.Content align="end">
 					<DropdownMenu.Item>
-						{#if user}
-							<Button href="/user" class="w-full">{user.username}</Button>
+						{#if data.user}
+							<Button href="/user" class="w-full">{data.user.username}</Button>
 						{:else}
 							<Button href="/user/login" class="w-full">Login</Button>
 						{/if}
 					</DropdownMenu.Item>
-					{#if user}
+					{#if data.user}
 						<Separator />
 						<form method="post" action="user?/logout">
 							<DropdownMenu.Item>

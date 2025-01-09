@@ -6,19 +6,30 @@ import * as auth from '$lib/server/auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
 import type { Actions, PageServerLoad } from './$types';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { userSchema } from '$lib/form-schema';
 
 export const load: PageServerLoad = async (event) => {
 	if (event.locals.user) {
 		return redirect(302, '/user');
 	}
-	return {};
+	return {
+		user: event.locals.user,
+        form: await superValidate(zod(userSchema)),
+	};
 };
 
 export const actions: Actions = {
 	login: async (event) => {
-		const formData = await event.request.formData();
-		const username = formData.get('username');
-		const password = formData.get('password');
+        const formData = await superValidate(event, zod(userSchema));
+        if (!formData.valid) {
+            return fail(400, {
+                formData,
+            });
+        }
+
+		const { username, password } = formData.data;
 
 		if (!validateUsername(username)) {
 			return fail(400, {
@@ -53,9 +64,14 @@ export const actions: Actions = {
 		return redirect(302, '/user');
 	},
 	register: async (event) => {
-		const formData = await event.request.formData();
-		const username = formData.get('username');
-		const password = formData.get('password');
+        const formData = await superValidate(event, zod(userSchema));
+        if (!formData.valid) {
+            return fail(400, {
+                formData,
+            });
+        }
+
+		const { username, password } = formData.data;
 
 		if (!validateUsername(username)) {
 			return fail(400, { message: 'Invalid username' });

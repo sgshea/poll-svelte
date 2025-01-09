@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types.js';
     import PollForm from './poll-creation-form.svelte';
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 </script>
 
 <PollForm data={data.form} />
