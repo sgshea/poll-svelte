@@ -21,7 +21,7 @@ export const load: PageServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-	login: async (event) => {
+	register: async (event) => {
         const formData = await superValidate(event, zod(userSchema));
         if (!formData.valid) {
             return fail(400, {
@@ -32,38 +32,40 @@ export const actions: Actions = {
 		const { username, password } = formData.data;
 
 		if (!validateUsername(username)) {
-			return fail(400, {
-				message: 'Invalid username (min 3, max 31 characters, alphanumeric only)'
-			});
+			return fail(400, { message: 'Invalid username' });
 		}
 		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password (min 6, max 255 characters)' });
+			return fail(400, { message: 'Invalid password' });
 		}
 
-		const results = await db.select().from(table.user).where(eq(table.user.username, username));
-
-		const existingUser = results.at(0);
-		if (!existingUser) {
-			return fail(400, { message: 'Incorrect username or password' });
-		}
-
-		const validPassword = await verify(existingUser.passwordHash, password, {
+		const userId = generateUserId();
+		const passwordHash = await hash(password, {
+			// recommended minimum parameters
 			memoryCost: 19456,
 			timeCost: 2,
 			outputLen: 32,
 			parallelism: 1
 		});
-		if (!validPassword) {
-			return fail(400, { message: 'Incorrect username or password' });
+
+		try {
+			await db.insert(table.user).values({ id: userId, username, passwordHash });
+
+			const sessionToken = auth.generateSessionToken();
+			const session = await auth.createSession(sessionToken, userId);
+			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
+		} catch (e) {
+			return fail(500, { message: 'An error has occurred' });
 		}
-
-		const sessionToken = auth.generateSessionToken();
-		const session = await auth.createSession(sessionToken, existingUser.id);
-		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
-
 		return redirect(302, '/user');
 	}
 };
+
+function generateUserId() {
+	// ID with 120 bits of entropy, or about the same as UUID v4.
+	const bytes = crypto.getRandomValues(new Uint8Array(15));
+	const id = encodeBase32LowerCase(bytes);
+	return id;
+}
 
 function validateUsername(username: unknown): username is string {
 	return (
