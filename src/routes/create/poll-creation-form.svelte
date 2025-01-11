@@ -34,7 +34,7 @@
 	}
 </script>
 
-<Card.Root class="mx-auto max-w-lg mt-12">
+<Card.Root class="mx-auto max-w-lg mt-5">
 	<Card.Header>
 		<Card.Title class="text-2xl">Create a new Poll</Card.Title>
 		<Card.Description>Enter a question and 2-10 possible options for the poll</Card.Description>

@@ -1,12 +1,35 @@
 import * as auth from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { db } from '$lib/server/db';
+import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async (event) => {
 	if (!event.locals.user) {
 		return redirect(302, '/user/login');
 	}
-	return { user: event.locals.user };
+
+	// Getting the poll questions that this user created
+	const createdQuestions = await db.query.questions.findMany({
+		where: (questions, { eq }) => eq(questions.creatorId, event.locals.user?.id),
+		with: {
+			choices: {
+				with: {
+					votes: true
+				}
+			},
+		},
+		columns: {
+			id: true,
+			question: true,
+			createdAt: true,
+		},
+	});
+
+	return {
+		createdQuestions,
+		user: event.locals.user
+	};
 };
 
 export const actions: Actions = {

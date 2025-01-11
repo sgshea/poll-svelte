@@ -103,7 +103,7 @@
 
 	<Card.Footer>
 		<p class="text-sm text-muted-foreground">
-			created at {question.createdAt} by {question.creator.username}
+			created at {question.createdAt} {#if question.creator}by {question.creator.username}{/if}
 		</p>
 	</Card.Footer>
 </Card.Root>
