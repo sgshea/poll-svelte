@@ -40,7 +40,7 @@
 		<Card.Description>Enter a question and 2-10 possible options for the poll</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<form method="post" action="?/login" use:enhance>
+		<form method="post" use:enhance>
 			<div class="grid gap-4">
 				<div class="grid gap-2">
 					<Form.Field {form} name="question">

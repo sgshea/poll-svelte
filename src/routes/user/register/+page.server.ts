@@ -32,10 +32,10 @@ export const actions: Actions = {
 		const { username, password } = formData.data;
 
 		if (!validateUsername(username)) {
-			return fail(400, { message: 'Invalid username' });
+			return fail(400, { message: 'Invalid username', formData });
 		}
 		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password' });
+			return fail(400, { message: 'Invalid password', formData });
 		}
 
 		const userId = generateUserId();
@@ -54,7 +54,7 @@ export const actions: Actions = {
 			const session = await auth.createSession(sessionToken, userId);
 			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		} catch (e) {
-			return fail(500, { message: 'An error has occurred' });
+			return fail(500, { message: 'An error has occurred', formData });
 		}
 		return redirect(302, '/user');
 	}

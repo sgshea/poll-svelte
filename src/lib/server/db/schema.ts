@@ -9,18 +9,26 @@ export const questions = sqliteTable(
 	'questions',
 	{
 		id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		// Question text
 		question: text('question').notNull(),
-		createdAt: text('createdAt')
+		// Id of user which created this question (must have a creator)
+		creatorId: text('creator_id').notNull(),
+		// Timestamp of creation
+		createdAt: text('created_at')
 			.notNull()
-			.default(sql`(current_timestamp)`)
+			.default(sql`(current_timestamp)`),
 	},
 	(questions) => ({
 		questionIdx: uniqueIndex('question_idx').on(questions.question)
 	})
 );
 
-export const questionRelations = relations(questions, ({ many }) => ({
-	choices: many(choices)
+export const questionRelations = relations(questions, ({ many, one }) => ({
+	choices: many(choices),
+	creator: one(user, {
+		fields: [questions.creatorId],
+		references: [user.id]
+	})
 }));
 
 export const choices = sqliteTable(
@@ -73,13 +81,13 @@ export const votesRelations = relations(votes, ({ one }) => ({
 //
 
 export const user = sqliteTable('user', {
-	id: text('id').primaryKey(),
+    id: text('id').primaryKey(),
 	username: text('username').notNull().unique(),
 	passwordHash: text('password_hash').notNull()
 });
 
 export const session = sqliteTable('session', {
-	id: text('id').primaryKey(),
+    id: text('id').primaryKey(),
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id),

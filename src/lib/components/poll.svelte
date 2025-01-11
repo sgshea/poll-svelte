@@ -18,6 +18,7 @@
 	import { PieChart, Tooltip, BarChart } from 'layerchart';
 	import { schemeTableau10 } from 'd3-scale-chromatic';
 
+
 	// Transform choice data into data to be passed into the chart(s)
 	const chartData = question.choices.map((choice: Choice) => ({
 		choice: choice.choice,
@@ -102,7 +103,7 @@
 
 	<Card.Footer>
 		<p class="text-sm text-muted-foreground">
-			Question {question.id} created at {question.createdAt}
+			created at {question.createdAt} by {question.creator.username}
 		</p>
 	</Card.Footer>
 </Card.Root>
