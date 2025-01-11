@@ -60,12 +60,18 @@ export const votes = sqliteTable(
 		choiceId: integer('choice_id')
 			.notNull()
 			.references(() => choices.id),
+		userId: text('user_id').references(() => user.id),  // Nullable to support anonymous votes
+		anonymousIdentifier: text('anonymous_identifier'), // Identifier for anonymous users
 		createdAt: text('createdAt')
 			.notNull()
 			.default(sql`(current_timestamp)`)
 	},
 	(votes) => ({
-		choiceIdx: index('vote_choice_idx').on(votes.choiceId)
+		choiceIdx: index('vote_choice_idx').on(votes.choiceId),
+		userOrAnonymousIdx: index('user_or_anonymous_idx').on(
+			votes.userId,
+			votes.anonymousIdentifier
+		)
 	})
 );
 
@@ -73,6 +79,10 @@ export const votesRelations = relations(votes, ({ one }) => ({
 	choice: one(choices, {
 		fields: [votes.choiceId],
 		references: [choices.id]
+	}),
+	user: one(user, {
+		fields: [votes.userId],
+		references: [user.id]
 	})
 }));
 
@@ -81,13 +91,13 @@ export const votesRelations = relations(votes, ({ one }) => ({
 //
 
 export const user = sqliteTable('user', {
-    id: text('id').primaryKey(),
+	id: text('id').primaryKey(),
 	username: text('username').notNull().unique(),
 	passwordHash: text('password_hash').notNull()
 });
 
 export const session = sqliteTable('session', {
-    id: text('id').primaryKey(),
+	id: text('id').primaryKey(),
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id),

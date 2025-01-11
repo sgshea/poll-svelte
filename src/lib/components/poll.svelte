@@ -41,7 +41,6 @@
 		{data}
 		x="choice"
 		y="votes"
-		cRange={schemeTableau10}
 		props={{
 			yAxis: {
 				format: 'integer'
@@ -50,6 +49,8 @@
 		labels={{
 			format: 'integer'
 		}}
+		c="choice"
+		cRange={schemeTableau10}
 	>
 		<svelte:fragment slot="tooltip" let:x let:y>
 			<Tooltip.Root let:data>
@@ -69,6 +70,7 @@
 		value="votes"
 		padding={{ bottom: 40 }}
 		legend={{ placement: 'bottom', orientation: 'horizontal' }}
+		c="choice"
 		cRange={schemeTableau10}
 	/>
 {/snippet}

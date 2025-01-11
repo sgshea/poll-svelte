@@ -79,3 +79,9 @@ export function deleteSessionTokenCookie(event: RequestEvent) {
 		path: '/'
 	});
 }
+
+// A hash of the user's IP address is used as a unique identifier if the user is not logged in
+export function getAnonymousIdentifier(event: RequestEvent) {
+	const ip = event.getClientAddress();
+	return encodeHexLowerCase(sha256(new TextEncoder().encode(ip)));
+}

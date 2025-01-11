@@ -40,7 +40,6 @@
 				</div>
 			</div>
 		</Card.Content>
-		<Card.Footer></Card.Footer>
 	</Card.Root>
 
 	<Card.Root class="col-start-2 row-start-2">

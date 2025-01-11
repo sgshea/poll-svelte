@@ -6,6 +6,7 @@ import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { votes } from '$lib/server/db/schema';
 import { and } from 'drizzle-orm/sqlite-core/expressions';
+import { getAnonymousIdentifier } from '$lib/server/auth';
 
 export const actions: Actions = {
     default: async (event) => {
@@ -18,7 +19,7 @@ export const actions: Actions = {
 
         const question_id = event.params.id;
         if (question_id === undefined) {
-            return { ok: false, message: "No Poll id provided" };
+            return fail(400, { ok: false, message: "No Poll id provided" });
         }
 
         const choice = form.data.choice;
@@ -29,13 +30,68 @@ export const actions: Actions = {
         });
 
         if (!choice_id) {
-            return { ok: false, message: "Choice not found" };
+            return fail(404, { ok: false, message: "Choice not found" });
         }
 
-        // Insert the vote into the database
-        await db.insert(votes).values({
-            choiceId: choice_id.id,
-        });
+        // If the user is not logged in we will use the user's address as a unique identifier
+        if (!event.locals.user) {
+            const ip = getAnonymousIdentifier(event);
+            // Check if the user has already voted
+            const question = await db.query.questions.findFirst({
+                // Get this question
+                where: (questions, { eq }) => eq(questions.id, +question_id),
+                // Get this question's choices
+                with: {
+                    choices: {
+                        // Get this choice's votes
+                        with: {
+                            votes: {
+                                // Get the user's vote
+                                where: (votes, { eq }) => eq(votes.anonymousIdentifier, ip)
+                            }
+                        }
+                    }
+                }
+            });
+
+            if (question?.choices.some(c => c.votes.length > 0)) {
+                return fail(409, { ok: false, message: "You have already voted on this poll" });
+            }
+
+            // Insert using ip address
+            await db.insert(votes).values({
+                choiceId: choice_id.id,
+                anonymousIdentifier: ip
+            });
+        } else {
+            // Check if the user has already voted for this question
+            const question = await db.query.questions.findFirst({
+                // Get this question
+                where: (questions, { eq }) => eq(questions.id, +question_id),
+                // Get this question's choices
+                with: {
+                    choices: {
+                        // Get this choice's votes
+                        with: {
+                            votes: {
+                                // Get the user's vote
+                                where: (votes, { eq }) => eq(votes.userId, event.locals.user!.id)
+                            }
+                        }
+                    }
+                }
+            });
+
+            if (question?.choices.some(c => c.votes.length > 0)) {
+                return fail(409, { ok: false, message: "You have already voted on this poll" });
+            }
+
+            // Insert using user id
+            await db.insert(votes).values({
+                choiceId: choice_id.id,
+                userId: event.locals.user!.id
+            });
+        }
 
         return {
             form
@@ -48,7 +104,7 @@ export const load = (async ({ params }) => {
     const { id }: { id?: string } = params;
 
     if (id === undefined) {
-        return { ok: false, message: "No Poll id provided" };
+        return fail(400, { ok: false, message: "No Poll id provided" });
     }
 
     const q = await db.query.questions.findFirst({
@@ -63,7 +119,7 @@ export const load = (async ({ params }) => {
     });
 
     if (!q) {
-        return { ok: false, message: "Poll not found" };
+        return fail(404, { ok: false, message: "Poll not found" });
     }
 
     return {
