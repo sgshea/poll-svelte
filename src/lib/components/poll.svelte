@@ -15,9 +15,8 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	import { PieChart, Tooltip, BarChart } from 'layerchart';
+	import { PieChart, Tooltip, BarChart, Svg } from 'layerchart';
 	import { schemeTableau10 } from 'd3-scale-chromatic';
-
 
 	// Transform choice data into data to be passed into the chart(s)
 	const chartData = question.choices.map((choice: Choice) => ({
@@ -34,6 +33,10 @@
 	function toggleChartType() {
 		chartType = chartType === 'bar' ? 'pie' : 'bar';
 	}
+
+	// Check if we have voted on this
+	const hasVoted = question.votedChoice;
+	console.log(question.votedChoice);
 </script>
 
 {#snippet pollBarChart(data: any)}
@@ -78,6 +81,9 @@
 <Card.Root>
 	<Card.Header>
 		<Card.Title>{question.question}</Card.Title>
+		<Card.Description
+			>{#if hasVoted}You voted for {question.votedChoice.choice}{/if}</Card.Description
+		>
 
 		<div class="ml-auto flex items-center">
 			<Button class="mr-2" size="sm" href="/poll/{question.id}">Vote</Button>
@@ -105,7 +111,8 @@
 
 	<Card.Footer>
 		<p class="text-sm text-muted-foreground">
-			created at {question.createdAt} {#if question.creator}by {question.creator.username}{/if}
+			created at {question.createdAt}
+			{#if question.creator}by {question.creator.username}{/if}
 		</p>
 	</Card.Footer>
 </Card.Root>

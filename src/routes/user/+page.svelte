@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import type { PageServerData } from './$types';
 
 	import * as Card from '$lib/components/ui/card/index.js';
 	import Poll from '$lib/components/poll.svelte';
 
 	let { data }: { data: PageServerData } = $props();
-	const { user, createdQuestions } = data;
+	const { user, createdQuestions, votedQuestions } = data;
 </script>
 
 <div class="mx-auto my-4 grid max-w-7xl grid-cols-2 auto-rows-max gap-4">
@@ -44,8 +43,23 @@
 
 	<Card.Root class="col-start-2 row-start-2">
 		<Card.Title class="mt-4 text-center text-xl">Votes</Card.Title>
-		<Card.Description></Card.Description>
-		<Card.Content></Card.Content>
+		<Card.Description class="text-center text-sm">
+			You have voted on {votedQuestions.length}
+			{#if votedQuestions.length == 1}
+				poll
+			{:else}
+				polls
+			{/if}
+		</Card.Description>
+		<Card.Content>
+			<div class="container">
+				<div class="grid grid-cols-1 gap-4">
+					{#each votedQuestions as question}
+						<Poll {question} />
+					{/each}
+				</div>
+			</div>
+		</Card.Content>
 		<Card.Footer></Card.Footer>
 	</Card.Root>
 </div>
