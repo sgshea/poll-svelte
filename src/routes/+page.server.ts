@@ -26,7 +26,7 @@ export const load: PageServerLoad = (async (event) => {
             question: true,
             createdAt: true,
         },
-    }).then((questions) => getUserChoices(questions, event.locals.user!.id));
+    }).then((questions) => getUserChoices(questions, event.locals.user?.id));
 
     return {
         questions: q,
