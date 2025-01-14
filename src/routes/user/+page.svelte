@@ -33,8 +33,8 @@
 		<Card.Content>
 			<div class="container">
 				<div class="grid grid-cols-1 gap-4">
-					{#each createdQuestions as question}
-						<Poll {question} />
+					{#each createdQuestions as {question, userChoice}}
+						<Poll {question} {userChoice} />
 					{/each}
 				</div>
 			</div>
@@ -54,8 +54,8 @@
 		<Card.Content>
 			<div class="container">
 				<div class="grid grid-cols-1 gap-4">
-					{#each votedQuestions as question}
-						<Poll {question} />
+					{#each votedQuestions as {question, userChoice}}
+						<Poll {question} {userChoice} />
 					{/each}
 				</div>
 			</div>

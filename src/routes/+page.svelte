@@ -12,8 +12,8 @@
 
 <div class="container mx-auto my-8">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-		{#each data.questions as question}
-			<Poll {question} />
+		{#each data.questions as {question, userChoice}}
+			<Poll {question} {userChoice}/>
 		{/each}
 	</div>
 </div>

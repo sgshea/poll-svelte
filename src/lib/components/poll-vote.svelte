@@ -35,7 +35,7 @@
 		<Card.Description>Choose an option to vote on the poll</Card.Description>
 	</Card.Header>
 
-	<form method="POST" action="/poll/{question.id}" use:enhance>
+	<form method="POST" action="/poll/{question.id}/vote" use:enhance>
 		<Card.Content class="grid gap-6">
 			<Form.Fieldset {form} name="choice" class="flex items-center space-x-4 rounded-md border p-4">
 				<RadioGroup.Root bind:value={$formData.choice} class="grid grid-cols-3 gap-4" name="choice">

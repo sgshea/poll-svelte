@@ -8,8 +8,9 @@
 
 	// props:
 	// question: Question to display, along with choices and votes
-	const { question } = $props<{
+	const { question, userChoice } = $props<{
 		question: Question;
+		userChoice: Choice | undefined;
 	}>();
 
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -33,10 +34,6 @@
 	function toggleChartType() {
 		chartType = chartType === 'bar' ? 'pie' : 'bar';
 	}
-
-	// Check if we have voted on this
-	const hasVoted = question.votedChoice;
-	console.log(question.votedChoice);
 </script>
 
 {#snippet pollBarChart(data: any)}
@@ -78,15 +75,19 @@
 	/>
 {/snippet}
 
-<Card.Root>
+<Card.Root class="w-full">
 	<Card.Header>
 		<Card.Title>{question.question}</Card.Title>
 		<Card.Description
-			>{#if hasVoted}You voted for {question.votedChoice.choice}{/if}</Card.Description
+			>{#if userChoice}You voted for {userChoice.choice}{/if}</Card.Description
 		>
 
 		<div class="ml-auto flex items-center">
-			<Button class="mr-2" size="sm" href="/poll/{question.id}">Vote</Button>
+			{#if userChoice}
+				<Button class="mr-2" size="sm" href="/poll/{question.id}">Results</Button>
+			{:else}
+				<Button class="mr-2" size="sm" href="/poll/{question.id}/vote">Vote</Button>
+			{/if}
 			<Button variant="outline" size="icon" onclick={toggleChartType}>
 				{#if chartType === 'bar'}
 					<ChartPie />

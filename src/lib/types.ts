@@ -16,4 +16,6 @@ export interface Vote {
     id: number;
     choiceId: number;
     createdAt: string;
+    userId: string | null;
+    anonymousIdentifier: string | null;
 }

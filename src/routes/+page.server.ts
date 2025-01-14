@@ -3,6 +3,7 @@ import { db } from '$lib/server/db';
 import { pollVoteSchema } from '$lib/form-schema';
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
+import { getUserChoices } from '$lib/db-query';
 
 export const load: PageServerLoad = (async (event) => {
     const q = await db.query.questions.findMany({
@@ -25,7 +26,7 @@ export const load: PageServerLoad = (async (event) => {
             question: true,
             createdAt: true,
         },
-    });
+    }).then((questions) => getUserChoices(questions, event.locals.user!.id));
 
     return {
         questions: q,
