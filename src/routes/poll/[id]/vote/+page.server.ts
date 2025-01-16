@@ -5,7 +5,7 @@ import { fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { votes } from '$lib/server/db/schema';
-import { and } from 'drizzle-orm/sqlite-core/expressions';
+import { and } from 'drizzle-orm';
 
 // Checks to see if current user has voted in the current question
 async function checkUserVotes(question_id: number, userId: string | undefined, ip: string) {

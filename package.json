@@ -25,7 +25,7 @@
 		"autoprefixer": "^10.4.20",
 		"bits-ui": "^1.0.0-next.77",
 		"clsx": "^2.1.1",
-		"drizzle-kit": "^0.22.0",
+		"drizzle-kit": "^0.22.8",
 		"eslint": "^9.7.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
@@ -58,6 +58,7 @@
 		"d3-scale": "^4.0.2",
 		"drizzle-orm": "^0.33.0",
 		"layerchart": "^0.60.3",
-		"mode-watcher": "^0.5.0"
+		"mode-watcher": "^0.5.0",
+		"postgres": "^3.4.5"
 	}
 }

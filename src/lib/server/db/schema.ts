@@ -1,14 +1,14 @@
 import { relations, sql } from 'drizzle-orm';
-import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { index, integer, pgTable, serial, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
 
 //
 // POLLING
 //
 
-export const questions = sqliteTable(
+export const questions = pgTable(
 	'questions',
 	{
-		id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		id: serial('id').primaryKey(),
 		// Question text
 		question: text('question').notNull(),
 		// Id of user which created this question (must have a creator)
@@ -31,10 +31,10 @@ export const questionRelations = relations(questions, ({ many, one }) => ({
 	})
 }));
 
-export const choices = sqliteTable(
+export const choices = pgTable(
 	'choices',
 	{
-		id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		id: serial('id').primaryKey(),
 		choice: text('choice').notNull(),
 		questionId: integer('question_id')
 			.notNull()
@@ -53,10 +53,10 @@ export const choicesRelations = relations(choices, ({ one, many }) => ({
 	votes: many(votes)
 }));
 
-export const votes = sqliteTable(
+export const votes = pgTable(
 	'votes',
 	{
-		id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+		id: serial('id').primaryKey(),
 		choiceId: integer('choice_id')
 			.notNull()
 			.references(() => choices.id),
@@ -90,18 +90,18 @@ export const votesRelations = relations(votes, ({ one }) => ({
 // AUTHENTICATION
 //
 
-export const user = sqliteTable('user', {
+export const user = pgTable('user', {
 	id: text('id').primaryKey(),
 	username: text('username').notNull().unique(),
 	passwordHash: text('password_hash').notNull()
 });
 
-export const session = sqliteTable('session', {
+export const session = pgTable('session', {
 	id: text('id').primaryKey(),
 	userId: text('user_id')
 		.notNull()
 		.references(() => user.id),
-	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
+	expiresAt: timestamp('expires_at').notNull(),
 });
 
 export type Session = typeof session.$inferSelect;
