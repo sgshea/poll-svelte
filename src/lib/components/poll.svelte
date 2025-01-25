@@ -4,7 +4,7 @@
 	It does *not* support voting on the poll. Use poll-vote for that.
 -->
 <script lang="ts">
-	import type { Choice, Question } from '$lib/types';
+	import type { Choice, Question, Vote } from '$lib/types';
 
 	// props:
 	// question: Question to display, along with choices and votes
@@ -16,17 +16,21 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 
-	import { PieChart, Tooltip, BarChart, Svg } from 'layerchart';
+	import { PieChart, Tooltip, BarChart } from 'layerchart';
 	import { schemeTableau10 } from 'd3-scale-chromatic';
 
 	// Transform choice data into data to be passed into the chart(s)
-	const chartData = question.choices.map((choice: Choice) => ({
-		choice: choice.choice,
-		votes: choice.votes.length
-	}));
+	let chartData = $state(
+		question.choices.map((choice: Choice) => ({
+			id: choice.id,
+			choice: choice.choice,
+			votes: choice.votes.length
+		}))
+	);
 
 	import { ChartPie, ChartColumn } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
+	import { supabase } from '../../supabaseClient';
 
 	// State to keep track of the current chart type
 	let chartType = $state('bar');
@@ -34,46 +38,32 @@
 	function toggleChartType() {
 		chartType = chartType === 'bar' ? 'pie' : 'bar';
 	}
+
+	$effect(() => {
+		const channel = supabase
+			.channel('supabase_realtime')
+			.on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, (payload) => {
+				if (payload.eventType === 'INSERT') {
+					const vote = payload.new;
+
+					// Adds to vote total
+					chartData.forEach((item: any) => {
+						if (item.id === vote.choice_id) {
+							item.votes += 1;
+						}
+					});
+				}
+			})
+			.subscribe();
+
+		console.log('Subscribed to channel', channel);
+
+		return () => {
+			console.log('Unsubscribing from channel');
+			supabase.removeChannel(channel);
+		};
+	});
 </script>
-
-{#snippet pollBarChart(data: any)}
-	<BarChart
-		{data}
-		x="choice"
-		y="votes"
-		props={{
-			yAxis: {
-				format: 'integer'
-			}
-		}}
-		labels={{
-			format: 'integer'
-		}}
-		c="choice"
-		cRange={schemeTableau10}
-	>
-		<svelte:fragment slot="tooltip" let:x let:y>
-			<Tooltip.Root let:data>
-				<Tooltip.Header>{x(data)}</Tooltip.Header>
-				<Tooltip.List>
-					<Tooltip.Item label="votes" value={y(data)} />
-				</Tooltip.List>
-			</Tooltip.Root>
-		</svelte:fragment>
-	</BarChart>
-{/snippet}
-
-{#snippet pollPieChart(data: any)}
-	<PieChart
-		{data}
-		key="choice"
-		value="votes"
-		padding={{ bottom: 40 }}
-		legend={{ placement: 'bottom', orientation: 'horizontal' }}
-		c="choice"
-		cRange={schemeTableau10}
-	/>
-{/snippet}
 
 <Card.Root class="w-full">
 	<Card.Header>
@@ -101,11 +91,42 @@
 	<Card.Content class="mx-4 my-4 rounded border p-4">
 		{#if chartType === 'pie'}
 			<div class="h-[300px]" in:fade>
-				{@render pollPieChart(chartData)}
+				<PieChart
+					data={chartData}
+					key="choice"
+					value="votes"
+					padding={{ bottom: 40 }}
+					legend={{ placement: 'bottom', orientation: 'horizontal' }}
+					c="choice"
+					cRange={schemeTableau10}
+				/>
 			</div>
 		{:else}
 			<div class="h-[300px]" in:fade>
-				{@render pollBarChart(chartData)}
+				<BarChart
+					data={chartData}
+					x="choice"
+					y="votes"
+					props={{
+						yAxis: {
+							format: 'integer'
+						}
+					}}
+					labels={{
+						format: 'integer'
+					}}
+					c="choice"
+					cRange={schemeTableau10}
+				>
+					<svelte:fragment slot="tooltip" let:x let:y>
+						<Tooltip.Root let:data>
+							<Tooltip.Header>{x(data)}</Tooltip.Header>
+							<Tooltip.List>
+								<Tooltip.Item label="votes" value={y(data)} />
+							</Tooltip.List>
+						</Tooltip.Root>
+					</svelte:fragment>
+				</BarChart>
 			</div>
 		{/if}
 	</Card.Content>

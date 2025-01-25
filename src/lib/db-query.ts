@@ -1,9 +1,9 @@
 // Utility functions to run database queries
 
-import type { Question } from "./types";
+import type { Choice, Question } from "./types";
 
 // Adds the choice the user voted on to a questions query
-export function getUserChoices(questions: Question[], userId: string | undefined) {
+export function getUserChoices(questions: Question[], userId: string | undefined): Array<{ question: Question; userChoice: Choice | undefined }> {
     return questions.map((question) => {
         const userChoice = question.choices.filter((choice) => {
             return choice.votes.some((vote) => vote.userId === userId);
