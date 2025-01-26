@@ -2,7 +2,7 @@
 	import type { PageData } from './$types';
 	import Poll from '$lib/components/poll.svelte';
 	import { supabase } from '../supabaseClient';
-	import type { Vote } from '$lib/types';
+	import type { Question, Vote } from '$lib/types';
 	let { data }: { data: PageData } = $props();
 
 	// Save data into state rune which will be used in Poll components
@@ -11,7 +11,7 @@
 	// Effect rune which opens a channel to the votes table, listening for new votes.
 	// This will update the question state with new votes, and trigger changes in the child Poll component
 	$effect(() => {
-		const channel = supabase
+		const votesChannel = supabase
 			.channel('supabase_realtime')
 			.on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, (payload) => {
 				if (payload.eventType === 'INSERT') {
@@ -32,7 +32,28 @@
 			.subscribe();
 
 		return () => {
-			supabase.removeChannel(channel);
+			supabase.removeChannel(votesChannel);
+		};
+	});
+
+	// Effect rune which opens a channel to the questions table, listening for new questions to be displayed.
+	$effect(() => {
+		const questionsChannel = supabase
+			.channel('supabase_realtime')
+			.on('postgres_changes', { event: '*', schema: 'public', table: 'questions' }, async (payload) => {
+				if (payload.eventType === 'INSERT') {
+					const newQuestion = payload.new;
+					// Get the question from our API
+					const response = await fetch(`/poll/${newQuestion.id}`);
+					const item = await response.json();
+					// Insert into questions array
+					questions.push({question: item as Question, userChoice: undefined});
+				}
+			})
+			.subscribe();
+
+		return () => {
+			supabase.removeChannel(questionsChannel);
 		};
 	});
 </script>

@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db';
-import { fail } from "@sveltejs/kit";
+import { fail, type RequestHandler } from "@sveltejs/kit";
 import { getUserChoice } from '$lib/db-query';
 
 // Load a single poll from the database based on the route's parameter id
