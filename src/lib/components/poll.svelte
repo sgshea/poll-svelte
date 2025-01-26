@@ -20,7 +20,7 @@
 	import { schemeTableau10 } from 'd3-scale-chromatic';
 
 	// Transform choice data into data to be passed into the chart(s)
-	let chartData = $state(
+	let chartData = $derived(
 		question.choices.map((choice: Choice) => ({
 			id: choice.id,
 			choice: choice.choice,
@@ -38,31 +38,6 @@
 	function toggleChartType() {
 		chartType = chartType === 'bar' ? 'pie' : 'bar';
 	}
-
-	$effect(() => {
-		const channel = supabase
-			.channel('supabase_realtime')
-			.on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, (payload) => {
-				if (payload.eventType === 'INSERT') {
-					const vote = payload.new;
-
-					// Adds to vote total
-					chartData.forEach((item: any) => {
-						if (item.id === vote.choice_id) {
-							item.votes += 1;
-						}
-					});
-				}
-			})
-			.subscribe();
-
-		console.log('Subscribed to channel', channel);
-
-		return () => {
-			console.log('Unsubscribing from channel');
-			supabase.removeChannel(channel);
-		};
-	});
 </script>
 
 <Card.Root class="w-full">
