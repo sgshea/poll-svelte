@@ -4,8 +4,10 @@ This page displays the results of a singular poll.
 <script lang="ts">
 	import Poll from '$lib/components/poll.svelte';
 	import type { Vote } from '$lib/types';
+	import { toast } from 'svelte-sonner';
 	import { supabase } from '../../../supabaseClient';
 	import { type PageServerData } from './$types';
+	import { Toaster } from '$lib/components/ui/sonner';
 
 	let { data }: { data: PageServerData } = $props();
 
@@ -26,6 +28,11 @@ This page displays the results of a singular poll.
 						if (choice.id === choiceId) {
 							const vote = { id: payload.new.id, choiceId } as Vote;
 							choice.votes.push(vote);
+
+							// Push a new toast
+							toast(`New vote for "${question.question}"`, {
+								description: `Choice "${choice.choice}" has received a new vote!`
+							});
 							break;
 						}
 					}
@@ -38,6 +45,8 @@ This page displays the results of a singular poll.
 		};
 	});
 </script>
+
+<Toaster />
 
 <div class="my-4 flex h-screen items-start justify-center px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
 	<Poll question={question} userChoice={data.userChoice} />

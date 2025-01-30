@@ -33,7 +33,11 @@ Displays a grid of the current polls
 
 								// Push a new toast
 								toast(`New vote for "${question.question.question}"`, {
-									description: `Choice "${choice.choice}" has received a new vote!`
+									description: `Choice "${choice.choice}" has received a new vote!`,
+									action: {
+										label: 'Goto',
+										onClick: () => (window.location.href = `/poll/${question.question.id}`)
+									}
 								});
 								break;
 							}
@@ -56,7 +60,11 @@ Displays a grid of the current polls
 
 						// Push a new toast
 						toast(`New poll created`, {
-							description: `Question: ${newQuestion.question}`
+							description: `Question: ${newQuestion.question}`,
+							action: {
+								label: 'Goto',
+								onClick: () => (window.location.href = `/poll/${newQuestion.id}`)
+							}
 						});
 					}
 				}
