@@ -8,16 +8,18 @@ Displays a grid of the current polls
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { supabase } from '../supabaseClient';
 	import type { Question, Vote } from '$lib/types';
+	import { Toaster } from '$lib/components/ui/sonner';
+	import { toast } from 'svelte-sonner';
 	let { data }: { data: PageData } = $props();
 
 	// Save data into state rune which will be used in Poll components
 	let questions = $state(data.questions);
 
-	// Effect rune which opens a channel to the votes table, listening for new votes.
-	// This will update the question state with new votes, and trigger changes in the child Poll component
 	$effect(() => {
-		const votesChannel = supabase
+		const channel = supabase
 			.channel('supabase_realtime')
+			// Opens a channel to the votes table, listening for new votes.
+			// This will update the question state with new votes, and trigger changes in the child Poll component
 			.on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, (payload) => {
 				if (payload.eventType === 'INSERT') {
 					const choiceId = payload.new.choice_id;
@@ -28,23 +30,18 @@ Displays a grid of the current polls
 							if (choice.id === choiceId) {
 								const vote = { id: payload.new.id, choiceId } as Vote;
 								choice.votes.push(vote);
+
+								// Push a new toast
+								toast(`New vote for "${question.question.question}"`, {
+									description: `Choice "${choice.choice}" has received a new vote!`
+								});
 								break;
 							}
 						}
 					}
 				}
 			})
-			.subscribe();
-
-		return () => {
-			supabase.removeChannel(votesChannel);
-		};
-	});
-
-	// Effect rune which opens a channel to the questions table, listening for new questions to be displayed.
-	$effect(() => {
-		const questionsChannel = supabase
-			.channel('supabase_realtime')
+			// Opens a channel to the questions table, listening for new questions to be displayed.
 			.on(
 				'postgres_changes',
 				{ event: '*', schema: 'public', table: 'questions' },
@@ -56,13 +53,18 @@ Displays a grid of the current polls
 						const item = await response.json();
 						// Insert into questions array
 						questions.push({ question: item as Question, userChoice: undefined });
+
+						// Push a new toast
+						toast(`New poll created`, {
+							description: `Question: ${newQuestion.question}`
+						});
 					}
 				}
 			)
 			.subscribe();
 
 		return () => {
-			supabase.removeChannel(questionsChannel);
+			supabase.removeChannel(channel);
 		};
 	});
 </script>
@@ -81,6 +83,8 @@ Displays a grid of the current polls
 		{/if}
 	</div>
 </div>
+
+<Toaster closeButton />
 
 <div class="container mx-auto my-8">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">

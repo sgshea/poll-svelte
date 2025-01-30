@@ -27,7 +27,7 @@ Page is protected by server, only logged in users can created polls.
 				toast(form.message.text, {
 					action: {
 						label: 'Goto',
-						onClick: () => (window.location.href = "/poll/" + form.message.id)
+						onClick: () => (window.location.href = `/poll/${form.message.id}`)
 					}
 				});
 			}
@@ -52,7 +52,8 @@ Page is protected by server, only logged in users can created polls.
 	}
 </script>
 
-<Toaster />
+<Toaster closeButton/>
+
 <div class="flex h-screen w-full items-start justify-center px-4">
 	<Card.Root class="mx-auto mt-5 max-w-lg">
 		<Card.Header>
