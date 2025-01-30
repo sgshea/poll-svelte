@@ -1,3 +1,6 @@
+<!--
+This page displays the results of a singular poll.
+-->
 <script lang="ts">
 	import Poll from '$lib/components/poll.svelte';
 	import type { Vote } from '$lib/types';

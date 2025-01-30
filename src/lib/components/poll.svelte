@@ -30,7 +30,6 @@
 
 	import { ChartPie, ChartColumn } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
-	import { supabase } from '../../supabaseClient';
 
 	// State to keep track of the current chart type
 	let chartType = $state('bar');

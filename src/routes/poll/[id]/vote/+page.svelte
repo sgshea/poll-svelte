@@ -1,3 +1,6 @@
+<!--
+This page allows users to vote on a poll
+-->
 <script lang="ts">
 	import PollVote from '$lib/components/poll-vote.svelte';
 	import type { PageData } from './$types';

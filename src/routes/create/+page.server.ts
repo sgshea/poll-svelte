@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from "./$types";
 import { fail, redirect } from "@sveltejs/kit";
-import { superValidate } from "sveltekit-superforms";
+import { message, superValidate } from "sveltekit-superforms";
 import { pollQuestionSchema } from "$lib/form-schema";
 import { zod } from "sveltekit-superforms/adapters";
 import { db } from '$lib/server/db';
@@ -20,9 +20,9 @@ export const load: PageServerLoad = async (event) => {
 export const actions: Actions = {
     default: async (event) => {
         // Make sure user is logged in
-		if (!event.locals.session) {
-			return fail(401);
-		}
+        if (!event.locals.session) {
+            return fail(401);
+        }
 
         const form = await superValidate(event, zod(pollQuestionSchema));
         if (!form.valid) {
@@ -44,8 +44,6 @@ export const actions: Actions = {
             });
         };
 
-        return {
-            form,
-        };
+        return message(form, { status: 'success', text: 'Poll created successfully!', id: question_id[0].id });
     },
-};
+} satisfies Actions;

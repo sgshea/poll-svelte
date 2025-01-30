@@ -1,6 +1,11 @@
+<!--
+Page component for the main page of the site.
+Displays a grid of the current polls
+-->
 <script lang="ts">
 	import type { PageData } from './$types';
 	import Poll from '$lib/components/poll.svelte';
+	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { supabase } from '../supabaseClient';
 	import type { Question, Vote } from '$lib/types';
 	let { data }: { data: PageData } = $props();
@@ -40,16 +45,20 @@
 	$effect(() => {
 		const questionsChannel = supabase
 			.channel('supabase_realtime')
-			.on('postgres_changes', { event: '*', schema: 'public', table: 'questions' }, async (payload) => {
-				if (payload.eventType === 'INSERT') {
-					const newQuestion = payload.new;
-					// Get the question from our API
-					const response = await fetch(`/poll/${newQuestion.id}`);
-					const item = await response.json();
-					// Insert into questions array
-					questions.push({question: item as Question, userChoice: undefined});
+			.on(
+				'postgres_changes',
+				{ event: '*', schema: 'public', table: 'questions' },
+				async (payload) => {
+					if (payload.eventType === 'INSERT') {
+						const newQuestion = payload.new;
+						// Get the question from our API
+						const response = await fetch(`/poll/${newQuestion.id}`);
+						const item = await response.json();
+						// Insert into questions array
+						questions.push({ question: item as Question, userChoice: undefined });
+					}
 				}
-			})
+			)
 			.subscribe();
 
 		return () => {
@@ -60,7 +69,16 @@
 
 <div class="my-4 flex justify-center">
 	<div class="px-6 py-3">
-		<h1 class="text-2xl font-bold">Current Polls</h1>
+		{#if questions.length === 0}
+			<h1 class="text-2xl font-bold">No polls available</h1>
+			<Separator class="my-4" />
+			<h4 class="text-xl">Polls will be displayed here, create one!</h4>
+		{:else}
+			<h1 class="text-2xl font-bold">Current Polls</h1>
+			<Separator class="my-4" />
+			<h4 class="text-xl">There are currently {questions.length} polls available</h4>
+			<Separator class="my-4" />
+		{/if}
 	</div>
 </div>
 

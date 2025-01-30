@@ -23,7 +23,7 @@
 		"@types/d3": "^7.4.3",
 		"@types/d3-scale": "^4.0.8",
 		"autoprefixer": "^10.4.20",
-		"bits-ui": "^1.0.0-next.77",
+		"bits-ui": "^1.0.0-next.78",
 		"clsx": "^2.1.1",
 		"drizzle-kit": "^0.22.8",
 		"eslint": "^9.7.0",
@@ -32,11 +32,13 @@
 		"formsnap": "^2.0.0",
 		"globals": "^15.0.0",
 		"lucide-svelte": "^0.469.0",
+		"mode-watcher": "^0.5.1",
 		"prettier": "^3.3.2",
 		"prettier-plugin-svelte": "^3.2.6",
 		"prettier-plugin-tailwindcss": "^0.6.5",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
+		"svelte-sonner": "^0.3.28",
 		"sveltekit-superforms": "^2.22.1",
 		"tailwind-merge": "^2.6.0",
 		"tailwind-variants": "^0.3.0",
@@ -59,7 +61,6 @@
 		"d3-scale": "^4.0.2",
 		"drizzle-orm": "^0.33.0",
 		"layerchart": "^0.60.3",
-		"mode-watcher": "^0.5.0",
 		"postgres": "^3.4.5"
 	}
 }
